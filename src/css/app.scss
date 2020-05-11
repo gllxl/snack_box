@@ -1,0 +1,45 @@
+// app global css in SCSS form
+.shop-card{
+  width: 90%;
+}
+.cart-dialog {
+  z-index: 0;
+}
+.pd-top{
+  margin-bottom: 8px;
+}
+.q-tab-panel {
+  padding: 8px;
+}
+
+.q-tab {
+
+  &__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+  }
+}
+.text-m-orange{
+  color: #ff7d00 !important;
+}
+.bg-m-orange{
+  background-color: #ff7d00 !important;
+}
+.q-dialog__inner--minimized {
+  padding: 0px;
+}
+.q-card__actions {
+  padding: 8px 8px 8px 8px;
+  align-items: center;
+}
+.q-list--padding {
+  padding: 0 0;
+}
+.q-card__section--vert{
+  padding: 4px;
+}
+.q-list--dense > .q-item, .q-item--dense {
+  min-height: 32px;
+  padding: 2px 8px;
+}
