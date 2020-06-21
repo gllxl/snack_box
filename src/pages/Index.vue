@@ -1,6 +1,22 @@
 <template>
   <div class="q-pa-sm q-gutter-sm">
+    <q-dialog v-model="dialog.admin" persistent transition-show="flip-down" transition-hide="flip-up">
+      <q-card style="width: 300px">
+        <q-card-section class="bg-teal text-white">
+          <div class="text-h6 q-ma-md">管理员登录</div>
+        </q-card-section>
 
+        <q-card-section class="q-ml-md q-mr-md q-mb-sm q-mt-md">
+          <q-input outlined dense v-model="admin.id" color="teal" label="账号"/>
+          <q-input class="q-mt-sm" outlined dense color="teal" v-model="admin.pwd" label="密码"/>
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="取消" v-close-popup/>
+          <q-btn flat label="登录" @click="AdminLogin()"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="dialog.shop" transition-show="flip-down" transition-hide="flip-up">
       <q-card class="shop-card">
         <q-img src="statics/pic/chicken-salad.jpg"/>
@@ -11,7 +27,7 @@
           <div class="no-wrap items-center" style="margin-left: 6px">
 
             <div class="col text-h6 ellipsis">
-              2-301寝室零食小铺
+              零食盒子 {{$store.state.shop_address}}
             </div>
             <div>
               信用评级
@@ -26,25 +42,42 @@
 
         <q-card-section class="q-pt-none">
 
-
         </q-card-section>
 
       </q-card>
     </q-dialog>
 
     <q-dialog v-model="dialog.replenishment" transition-show="flip-down" transition-hide="flip-up">
-      <q-card class="shop-card">
-
-        <q-card-section>
-
-
+      <q-card style="width: 300px">
+        <q-card-section class="bg-teal text-white">
+          <div class="text-h6 q-ma-md">补货申请单</div>
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
-
-
+        <q-card-section class="q-ml-md q-mr-md q-mb-sm q-mt-md">
+          <q-list padding class="rounded-borders">
+            <q-item dense v-for="item in replenishment_info" clickable v-ripple>
+              <q-item-section>
+                {{item.replenishmentItemName}} * {{item.replenishmentItemNum}}
+              </q-item-section>
+              <q-item-section side>
+                {{item.replenishmentItemPrice}}
+              </q-item-section>
+            </q-item>
+            <q-separator/>
+            <q-item dense clickable v-ripple class="text-weight-bold">
+              <q-item-section>
+                合计：
+              </q-item-section>
+              <q-item-section side>
+                {{total}}
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
 
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="确认" v-close-popup/>
+        </q-card-actions>
       </q-card>
     </q-dialog>
 
@@ -52,7 +85,7 @@
       <q-card style="min-width: 240px;height: 100px">
 
         <q-card-section class="row items-center no-wrap q-ml-sm q-mt-sm q-mb-sm">
-          <q-avatar class="text-center">
+          <q-avatar class="text-center" @click="changeAccount()">
             <img :src="$store.state.user_info.headimgurl">
           </q-avatar>
           <div style="margin-left: 20px" class="text-subtitle2">{{$store.state.user_info.nickname}}</div>
@@ -77,7 +110,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="getBoxItem()">
+          <q-item clickable v-ripple @click="Replenishment()">
             <q-item-section avatar top>
               <q-icon name="mdi-phone" size="30px" color="accent"/>
             </q-item-section>
@@ -91,7 +124,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="pay()">
             <q-item-section avatar top>
               <q-icon name="mdi-swap-horizontal" size="30px" color="accent"/>
             </q-item-section>
@@ -118,7 +151,23 @@
               <q-icon name="keyboard_arrow_right"/>
             </q-item-section>
           </q-item>
+
+          <q-item v-if="$store.state.permission != '0' " @click="$router.push('admin_manage')" clickable v-ripple
+                  :active="active" active-class="text-teal">
+            <q-item-section avatar top>
+              <q-icon color="teal" name="mdi-file-table-box-multiple-outline" size="30px"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label lines="1">盒子管理</q-item-label>
+            </q-item-section>
+
+            <q-item-section side>
+              <q-icon color="teal" name="keyboard_arrow_right"/>
+            </q-item-section>
+          </q-item>
         </q-list>
+
       </q-card>
 
     </q-dialog>
@@ -138,7 +187,7 @@
         </q-btn>
         <div class="row no-wrap items-center" @click="dialog.shop=true">
           <div class="col text-h6 ellipsis" style="margin-left: 4px">
-            301寝室零食小铺
+            零食盒子 {{$store.state.shop_address}}
           </div>
 
         </div>
@@ -152,19 +201,17 @@
           <q-splitter
             v-model="splitterModel"
             style="height: 100%"
+            :limits="[20,20]"
           >
 
             <template v-slot:before>
               <q-tabs
                 v-model="tab"
                 vertical
-                class="text-teal"
+                class="text-secondary"
               >
-                <q-tab name="lt" class="text-m-orange" icon="img:statics/list_icons/latiao.svg" label="辣条"/>
-                <q-tab name="dzp" class="text-m-orange" icon="img:statics/list_icons/dougan.svg" label="豆制品"/>
-                <q-tab name="kcl" class="text-m-orange" icon="img:statics/list_icons/kaochang.svg" label="烤肠类"/>
-                <q-tab name="rs" class="text-m-orange" icon="img:statics/list_icons/roushi.svg" label="肉食"/>
-                <q-tab name="ts" class="text-m-orange" icon="img:statics/list_icons/tangguo.svg" label="甜食"/>
+                <q-tab v-for="tab in items" :name="tab.sortName" :label="tab.sortName"
+                       :icon="'img:' + tab.sortPhotoAddress" :key="tab.sortId" v-bind="tab"/>
               </q-tabs>
             </template>
 
@@ -175,63 +222,28 @@
                 transition-prev="jump-up"
                 transition-next="jump-up"
               >
-                <q-tab-panel name="lt">
-                  <q-card class="item-card pd-top" v-for="(item,i) in $store.state.item_list.lt"
+                <q-tab-panel v-for="(item,i) in items" :name="item.sortName">
+                  <q-card class="item-card pd-top" v-for="(item) in item.sortPageItem"
                           @click="ItemToCart(item)">
                     <q-item clickable v-ripple>
                       <q-item-section side>
                         <q-avatar rounded size="48px">
-                          <img src="https://cdn.quasar.dev/img/avatar.png"/>
-                          <q-badge floating color="teal">新品</q-badge>
+                          <img :src="item.itemPhotoAddress"/>
+                          <!--                          <q-badge floating color="teal">新品</q-badge>-->
                         </q-avatar>
                       </q-item-section>
                       <q-item-section>
-                        <q-item-label>{{item.item_name}}</q-item-label>
-                        <q-item-label caption>余量：10</q-item-label>
+                        <q-item-label>{{item.itemName}}</q-item-label>
+                        <q-item-label caption>余量：{{item.itemStockCurrent}}</q-item-label>
                       </q-item-section>
                       <q-item-section side>
-                        ￥{{item.item_price}}/{{item.item_unit}}
+                        ￥{{item.itemPrice}}
                       </q-item-section>
                     </q-item>
                   </q-card>
                 </q-tab-panel>
-
-                <q-tab-panel name="dzp">
-                  <q-card class="item-card pd-top" v-for="(item,i) in $store.state.item_list.dzp"
-                          @click="ItemToCart(item)">
-                    <q-item clickable v-ripple>
-                      <q-item-section side>
-                        <q-avatar rounded size="48px">
-                          <img src="https://cdn.quasar.dev/img/avatar.png"/>
-                          <q-badge floating color="teal">新品</q-badge>
-                        </q-avatar>
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{item.item_name}}</q-item-label>
-                        <q-item-label caption>余量：10</q-item-label>
-                      </q-item-section>
-                      <q-item-section side>
-                        ￥{{item.item_price}}/{{item.item_unit}}
-                      </q-item-section>
-                    </q-item>
-                  </q-card>
-                </q-tab-panel>
-
-                <q-tab-panel name="kcl">
-
-                </q-tab-panel>
-
-                <q-tab-panel name="rs">
-
-                </q-tab-panel>
-
-                <q-tab-panel name="ts">
-
-                </q-tab-panel>
-
               </q-tab-panels>
             </template>
-
           </q-splitter>
         </div>
       </template>
@@ -241,43 +253,184 @@
 
 <script>
   import axios from "axios";
-  const Qs = require('qs');
+  import {wexinPay} from "../plugins/weixinPay"
+  import $ from 'jquery'
+
+  const qs = require('qs');
   export default {
     name: 'PageIndex',
+    beforeMount() {
+      this.items = this.$store.state.items;
+      this.tab = this.$store.state.items[0].sortName;
+    },
     data() {
       return {
         dialog: {
           replenishment: false,
           shop: false,
           user_info: false,
+          admin: false
         },
+        replenishment_info: null,
+        total: null,
+        num: 0,
+        time0: '',
+        time4: '',
+        items: null,
         stars: 3,
-        tab: 'lt',
+        tab: null,
+        admin: {
+          id: '',
+          pwd: ''
+        },
+        active: true,
         splitterModel: 20,
       }
     },
     methods: {
       ItemToCart(item) {
         this.$emit('getItem', item);
-        console.log(item);
-        console.log(this.$store.state.cart_list)
       },
       goOrder() {
         this.$router.push('/order');
       },
-      getBoxItem() {
+
+      pay() {
+        // let that = this;
+        // axios.post(that.$store.state.url_paths.getWxConfig, qs.stringify({}))
+        //   .then(function (response) {
+        //       pay(response.data)
+        //   })
+        //   .catch(function (error) {
+        //     that.$q.dialog({
+        //       title: '网络错误',
+        //       message: '错误信息：' + error
+        //     })
+        //   });
+      },
+      Replenishment() {
         let that = this;
-        axios.post(that.$store.state.url_paths.getBoxItems, Qs.stringify({
-          access_token: that.$store.state.user_info.access_token
+        axios.post(that.$store.state.url_paths.replenishment, qs.stringify({
+          access_token: that.$store.state.user_info.access_token,
         }))
           .then(function (response) {
-            // if (response.data.code === 200) {
-            //   that.$store.commit('GetUserInfo', response.data.data.userInfo);
-            //   console.log(that.$store.state.user_info);
-            //   that.$router.push('/');
-            // }
+            if (response.data.code === 200) {
+              that.dialog.replenishment = true;
+              that.total = response.data.data.allPrice;
+              that.replenishment_info = response.data.data.info;
+            } else if (response.data.code !== 200) {
+              that.$q.dialog({
+                title: response.data.code + '错误！',
+                message: '错误信息：' + response.data.msg
+              })
+            }
           })
+          .catch(function (error) {
+            that.$q.dialog({
+              title: '网络错误',
+              message: '错误信息：' + error
+            })
+          });
+      },
+      AdminLogin() {
+        let that = this;
+        axios.post(that.$store.state.url_paths.bindPermission, qs.stringify({
+          access_token: that.$store.state.user_info.access_token,
+          userLogin: that.admin.id,
+          userPassword: that.admin.pwd
+        }))
+          .then(function (response) {
+            if (response.data.code === 200) {
+              that.$q.notify('登录成功');
+              that.dialog.admin = false;
+            } else if (response.data.code !== 200) {
+              that.$q.dialog({
+                title: response.data.code + '错误！',
+                message: '错误信息：' + response.data.msg
+              })
+            }
+          })
+          .catch(function (error) {
+            that.$q.dialog({
+              title: '网络错误',
+              message: '错误信息：' + error
+            })
+          });
+      },
+      changeAccount() {
+        this.num++;
+        if (this.num == 1) {
+          this.timer0 = new Date().getTime() / 1000
+        }
+        if (this.num == 4) {
+          this.timer4 = new Date().getTime() / 1000;
+          if (this.timer4 - this.timer0 <= 3) {
+            this.num = 0;
+            this.dialog.admin = true
+          } else {
+            this.num = 0
+          }
+        }
       }
     }
+  }
+  var appId, timeStamp, nonceStr, package_, signType, paySign;
+
+  function pay() {
+    var url = "http://lsp.chinaqwe.top:10001/pay/orders";
+    $.get(url, function (result) {
+      appId = result.appId;
+      timeStamp = result.timeStamp;
+      nonceStr = result.nonceStr;
+      package_ = result.package;
+      signType = result.signType;
+      paySign = result.paySign;
+
+      if (typeof WeixinJSBridge == "undefined") {
+        if (document.addEventListener) {
+          document.addEventListener('WeixinJSBridgeReady',
+            onBridgeReady, false);
+        } else if (document.attachEvent) {
+          document.attachEvent('WeixinJSBridgeReady',
+            onBridgeReady);
+          document.attachEvent('onWeixinJSBridgeReady',
+            onBridgeReady);
+        }
+        alert("请在微信上进行支付操作！");
+        onBridgeReady();
+      } else {
+        onBridgeReady();
+      }
+    });
+  }
+
+  //去微信那边发起支付请求
+  function onBridgeReady() {
+
+    alert("appId:" + appId + " " + "timeStamp:" + timeStamp + " " + "nonceStr:" + nonceStr + " " + "package:" + package_ + " " + "signType:" + signType + " " + "paySign:" + paySign + " ");
+
+    WeixinJSBridge.invoke('getBrandWCPayRequest', {
+        "appId": appId,     //公众号名称,由商户传入
+        "timeStamp": timeStamp,         //时间戳,自1970年以来的秒数
+        "nonceStr": nonceStr, //随机串
+        "package": package_,
+        "signType": signType,         //微信签名方式：
+        "paySign": paySign //微信签名
+      },
+      function (res) {
+        if (res.err_msg == "get_brand_wcpay_request:ok") {
+          //alert('支付成功');
+          console.log("支付成功");
+          //支付成功后跳转的页面
+        } else if (res.err_msg == "get_brand_wcpay_request:cancel") {
+          alert('支付取消');
+        } else if (res.err_msg == "get_brand_wcpay_request:fail") {
+          alert('支付失败');
+
+          alert(JSON.stringify(res));
+
+          WeixinJSBridge.call('closeWindow');
+        } //使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok,但并不保证它绝对可靠。
+      });
   }
 </script>

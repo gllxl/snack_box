@@ -1,6 +1,14 @@
-<template>
-  <q-page padding>
-    正在获取微信授权
+<template >
+  <q-page class="flex flex-center ">
+
+    <div class="row flex-center" style="width: 100%">
+      <q-spinner-dots
+        size="xl"
+        color="secondary"
+        style="margin: auto auto "
+      />
+    </div>
+    <img alt="Snack Box" width="128px" style="margin-top: -470px" src="statics/logo.png">
   </q-page>
 </template>
 
@@ -11,6 +19,11 @@
   const Qs = require('qs');
   export default {
     name: 'PageName',
+    data() {
+      return {
+        log : ''
+      }
+    },
     created() {
       let that = this;
       // 检测会员有没有登录
@@ -22,7 +35,7 @@
           that.login()
         }
       } else {
-        console.log('已登录')
+        that.log = '请使用微信登录'
       }
     }, methods: {
       login() {
@@ -34,9 +47,19 @@
         }))
           .then(function (response) {
             if (response.data.code === 200){
+              that.$store.commit('getShopAddress',response.data.data.shopAddress);
               that.$store.commit('getUserInfo',response.data.data.userInfo);
+              that.$store.commit('getUserPermission',response.data.data.permission);
               console.log(that.$store.state.user_info);
-              that.$router.push('/');
+              axios.post(that.$store.state.url_paths.getBoxItems, Qs.stringify({
+                access_token: that.$store.state.user_info.access_token
+              }))
+                .then(function (response) {
+                  if (response.data.code === 200) {
+                    that.$store.commit('getBoxItems', response.data.data.Info);
+                    that.$router.push('/');
+                  }
+                });
             }
           })
       },

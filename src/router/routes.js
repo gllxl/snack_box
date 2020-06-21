@@ -15,7 +15,9 @@ const routes = [
     path: '/author',
     component: () => import('layouts/WhiteLayout.vue'),
     children: [
-      {path: '/author', component: () => import('pages/Author.vue')}
+      {path: '/author', component: () => import('pages/Author.vue')},
+      {path: '/admin_manage', component: () => import('pages/AdminManage.vue')},
+      {path: '/admin_manage_detail', component: () => import('pages/AdminManageDetail.vue')}
     ]
   },
 ];

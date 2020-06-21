@@ -4,59 +4,41 @@
     <div class="q-pa-xs">
       <div class=" justify-center q-gutter-sm">
         <q-intersection
-          v-for="index in 60"
-          :key="index"
+          v-for="(order,i) in order_list"
+          :key="order.orderId"
           once
           transition="scale"
           class="example-item"
         >
 
           <q-card class="my-card" flat bordered>
-            <q-linear-progress size="2px"  :value="1" color="secondary"/>
+            <q-linear-progress size="2px" :value="1" color="secondary"/>
             <q-card-section>
 
               <q-list dense padding class="rounded-borders">
-                <q-item clickable v-ripple>
+                <q-item v-for="item in order.orderItemJson.cart_list" clickable v-ripple>
                   <q-item-section>
-                    绿爽 * 8
+                    {{item.itemName}} * {{item.num}}
                   </q-item-section>
                   <q-item-section side>
-                    ￥4.00
+                    ￥ {{item.itemPrice}}
                   </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple>
-                  <q-item-section>
-                    鱼豆腐 * 3
-                  </q-item-section>
-
-                  <q-item-section side>
-                    ￥1.00
-                  </q-item-section>
-                </q-item>
-
-                <q-item clickable v-ripple>
-                  <q-item-section>
-                    豆干 * 2
-                  </q-item-section>
-                  <q-item-section side>
-                    ￥1.00
-                  </q-item-section>
-                </q-item>
               </q-list>
 
             </q-card-section>
 
             <q-card-actions>
               <div class="text-caption text-grey">
-                2020/01/26 19:30:50
+                {{order.orderTime}}
               </div>
               <q-space/>
               <div class="text-caption text-grey">
                 实付:
               </div>
               <span class="text-m-orange">
-                ￥10.00
+                ￥{{order.orderPrice}}
               </span>
             </q-card-actions>
 
@@ -70,12 +52,40 @@
 
 
 <script>
+  import axios from "axios";
+
+  const Qs = require('qs');
   export default {
     data() {
       return {
         expanded: false,
-        lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+        order_list: [
+          {
+            orderItemJson :{}
+          }
+        ]
       }
-    }
+    },
+    beforeMount() {
+      this.getOrder()
+    },
+    methods: {
+      getOrder() {
+        let that = this;
+        axios.post(that.$store.state.url_paths.getOrder, Qs.stringify({
+          access_token: that.$store.state.user_info.access_token
+        }))
+          .then(function (response) {
+            if (response.data.code === 200) {
+              that.order_list = response.data.data.OrderInfo;
+              for (let i = 0; i < response.data.data.OrderInfo.length; i++) {
+                console.log(that.order_list[i].orderItemJson);
+                that.order_list[i].orderItemJson = JSON.parse(response.data.data.OrderInfo[i].orderItemJson);
+              }
+              console.log(that.order_list)
+            }
+          })
+      }
+    },
   }
 </script>
