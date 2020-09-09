@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import el from "quasar/lang/el";
-import it from "quasar/lang/it";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import el from 'quasar/lang/el';
+import it from 'quasar/lang/it';
 
 // import example from './module-example'
 
@@ -17,21 +17,21 @@ Vue.use(Vuex);
  */
 
 export default function (/* { ssrContext } */) {
-  //const hostname = 'http://47.96.151.125:10001/';
-  //const hostname = 'http://lsp.free-http.svipss.top/';
+  // const hostname = 'http://47.96.151.125:10001/';
+  // const hostname = 'http://lsp.free-http.svipss.top/';
   const hostname = 'http://lsp.chinaqwe.top:10001/';
   const Store = new Vuex.Store({
     state: {
       user_info: {
-        access_token: null
+        access_token: null,
       },
       items: null,
       code: '',
       shop_id: null,
       shop_address: '',
-      permission: "0",
+      permission: '0',
       location: {
-        id: ''
+        id: '',
       },
       cart: {
         cart_price_total: 0,
@@ -39,47 +39,41 @@ export default function (/* { ssrContext } */) {
         cart_list: [],
       },
       url_paths: {
-        getCode: hostname + 'user/getCode',
-        getBoxItems: hostname + 'user/getItem',
-        buyItems: hostname + 'user/buyItems',
-        getOrder: hostname + 'user/getOrder',
-        getWxConfig: hostname + 'pay/orders',
-        adminGetShops: hostname + 'admin/findAllShdengopInfo',
-        bindPermission: hostname + 'admin/bindPermission',
-        findItemInfoByShopId: hostname + 'admin/findItemInfoByShopId',
-        replenishment: hostname + 'user/replenishment',
-        findReplenishmentInfo: hostname + 'admin/findReplenishmentInfo'
-      }
+        getCode: `${hostname}user/getCode`,
+        getBoxItems: `${hostname}user/getItem`,
+        buyItems: `${hostname}user/buyItems`,
+        getOrder: `${hostname}user/getOrder`,
+        getWxConfig: `${hostname}pay/orders`,
+        adminGetShops: `${hostname}admin/findAllShdengopInfo`,
+        bindPermission: `${hostname}admin/bindPermission`,
+        findItemInfoByShopId: `${hostname}admin/findItemInfoByShopId`,
+        replenishment: `${hostname}user/replenishment`,
+        findReplenishmentInfo: `${hostname}admin/findReplenishmentInfo`,
+      },
     },
     getters: {},
     mutations: {
       addItemToCart(state, item) {
-        let flag = state.cart.cart_list.filter((p) => {
-          return p.itemId === item.itemId;
-        });
-        //console.log(flag);
+        const flag = state.cart.cart_list.filter(p => p.itemId === item.itemId);
+        // console.log(flag);
         if (flag.length === 0) {
           state.cart.cart_list.push({
             itemId: item.itemId,
             itemName: item.itemName,
             itemPrice: item.itemPrice,
             itemStockCurrent: item.itemStockCurrent,
-            num: 1
+            num: 1,
           });
           state.cart.cart_price_total += item.itemPrice;
           ++state.cart.cart_item_total;
-        } else {
-          if (flag[0].num < flag[0].itemStockCurrent) {
-            ++flag[0].num;
-            state.cart.cart_price_total += flag[0].itemPrice;
-            ++state.cart.cart_item_total;
-          }
+        } else if (flag[0].num < flag[0].itemStockCurrent) {
+          ++flag[0].num;
+          state.cart.cart_price_total += flag[0].itemPrice;
+          ++state.cart.cart_item_total;
         }
       },
       item_add(state, itemId) {
-        let flag = state.cart.cart_list.filter((p) => {
-          return p.itemId === itemId;
-        });
+        const flag = state.cart.cart_list.filter(p => p.itemId === itemId);
         if (flag[0].num < flag[0].itemStockCurrent) {
           ++flag[0].num;
           ++state.cart.cart_item_total;
@@ -87,17 +81,14 @@ export default function (/* { ssrContext } */) {
         }
       },
       item_remove(state, itemId) {
-        let flag = state.cart.cart_list.filter((p) => {
-          return p.itemId === itemId;
-        });
+        const flag = state.cart.cart_list.filter(p => p.itemId === itemId);
         if (flag[0].num <= 1) {
-          let index = state.cart.cart_list.indexOf(flag[0]);
+          const index = state.cart.cart_list.indexOf(flag[0]);
           index > -1 && state.cart.cart_list.splice(index, 1);
         }
         --flag[0].num;
         --state.cart.cart_item_total;
         state.cart.cart_price_total -= flag[0].itemPrice * 100 / 100;
-
       },
       getCode(state, code) {
         state.code = code;
@@ -109,23 +100,23 @@ export default function (/* { ssrContext } */) {
         state.shop_address = shop_address;
       },
       getUserInfo(state, user_info) {
-        state.user_info = user_info
+        state.user_info = user_info;
       },
       getUserPermission(state, permission) {
-        state.permission = permission
+        state.permission = permission;
       },
       getBoxItems(state, items) {
-        state.items = items
+        state.items = items;
       },
       changeLocation(state, location) {
-        state.location = location
-      }
+        state.location = location;
+      },
     },
 
     // enable strict mode (adds overhead!)
     // for dev mode only
-    strict: process.env.DEV
+    strict: process.env.DEV,
   });
 
-  return Store
+  return Store;
 }

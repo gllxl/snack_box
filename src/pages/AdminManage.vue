@@ -149,90 +149,91 @@
 </template>
 
 <script>
-  import axios from "axios";
+import axios from 'axios';
 
-  const qs = require('qs');
-  export default {
-    name: "AdminManage",
-    created() {
-      this.findAllShopInfo();
-      this.findReplenishmentInfo();
+const qs = require('qs');
+
+export default {
+  name: 'AdminManage',
+  created() {
+    this.findAllShopInfo();
+    this.findReplenishmentInfo();
+  },
+  data() {
+    return {
+      shop_info: '',
+      replenishment_info: '',
+      replenishment_info_detail: {
+        ReplenishmentInfo: null,
+      },
+      location: {
+        id: 0,
+      },
+      tab: 'ph',
+      shop_address: null,
+      item_list: null,
+      dialog: {
+        item_info: false,
+        replenishment_info: false,
+      },
+    };
+  },
+  methods: {
+    findAllShopInfo() {
+      const that = this;
+      axios.post(that.$store.state.url_paths.adminGetShops, qs.stringify({
+        access_token: that.$store.state.user_info.access_token,
+      }))
+        .then((response) => {
+          that.shop_info = response.data.ShopInfo;
+        })
+        .catch((error) => {
+          that.$q.dialog({
+            title: '网络错误',
+            message: `错误信息：${error}`,
+          });
+        });
     },
-    data() {
-      return {
-        shop_info: '',
-        replenishment_info: '',
-        replenishment_info_detail: {
-          ReplenishmentInfo: null
-        },
-        location: {
-          id: 0
-        },
-        tab: 'ph',
-        shop_address: null,
-        item_list: null,
-        dialog: {
-          item_info: false,
-          replenishment_info: false,
-        }
-      }
-    }, methods: {
-      findAllShopInfo() {
-        let that = this;
-        axios.post(that.$store.state.url_paths.adminGetShops, qs.stringify({
-          access_token: that.$store.state.user_info.access_token,
-        }))
-          .then(function (response) {
-            that.shop_info = response.data.ShopInfo
-          })
-          .catch(function (error) {
-            that.$q.dialog({
-              title: '网络错误',
-              message: '错误信息：' + error
-            })
+    findReplenishmentInfo() {
+      const that = this;
+      axios.post(that.$store.state.url_paths.findReplenishmentInfo, qs.stringify({
+        access_token: that.$store.state.user_info.access_token,
+      }))
+        .then((response) => {
+          that.replenishment_info = response.data.data.info;
+        })
+        .catch((error) => {
+          that.$q.dialog({
+            title: '网络错误',
+            message: `错误信息：${error}`,
           });
-      },
-      findReplenishmentInfo() {
-        let that = this;
-        axios.post(that.$store.state.url_paths.findReplenishmentInfo, qs.stringify({
-          access_token: that.$store.state.user_info.access_token,
-        }))
-          .then(function (response) {
-            that.replenishment_info = response.data.data.info;
-          })
-          .catch(function (error) {
-            that.$q.dialog({
-              title: '网络错误',
-              message: '错误信息：' + error
-            })
+        });
+    },
+    getReplenishmentDetailInfo(replenishment_info) {
+      this.replenishment_info_detail = replenishment_info;
+      this.dialog.replenishment_info = true;
+      this.replenishment_info_detail.replenishmentInfo = JSON.parse(replenishment_info.replenishmentInfo);
+    },
+    goShopDetail(shop) {
+      const that = this;
+      that.shop_address = shop.shopAddress;
+      axios.post(that.$store.state.url_paths.findItemInfoByShopId, qs.stringify({
+        access_token: that.$store.state.user_info.access_token,
+        shop_id: shop.shopId,
+      }))
+        .then((response) => {
+          that.item_list = response.data.itemInfo;
+          that.dialog.item_info = true;
+        })
+        .catch((error) => {
+          that.$q.dialog({
+            title: '网络错误',
+            message: `错误信息：${error}`,
           });
-      },
-      getReplenishmentDetailInfo(replenishment_info) {
-        this.replenishment_info_detail = replenishment_info;
-        this.dialog.replenishment_info = true;
-        this.replenishment_info_detail.replenishmentInfo = JSON.parse(replenishment_info.replenishmentInfo)
-      },
-      goShopDetail(shop) {
-        let that = this;
-        that.shop_address = shop.shopAddress;
-        axios.post(that.$store.state.url_paths.findItemInfoByShopId, qs.stringify({
-          access_token: that.$store.state.user_info.access_token,
-          shop_id: shop.shopId
-        }))
-          .then(function (response) {
-            that.item_list = response.data.itemInfo;
-            that.dialog.item_info = true
-          })
-          .catch(function (error) {
-            that.$q.dialog({
-              title: '网络错误',
-              message: '错误信息：' + error
-            })
-          });
-
-      },
-    }
-  }
+        });
+    },
+  },
+};
 </script>
 
 <style scoped>

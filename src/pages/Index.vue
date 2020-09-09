@@ -27,7 +27,7 @@
           <div class="no-wrap items-center" style="margin-left: 6px">
 
             <div class="col text-h6 ellipsis">
-              零食盒子 {{$store.state.shop_address}}
+              零食盒子 {{ $store.state.shop_address }}
             </div>
             <div>
               信用评级
@@ -57,10 +57,10 @@
           <q-list padding class="rounded-borders">
             <q-item dense v-for="item in replenishment_info" clickable v-ripple>
               <q-item-section>
-                {{item.replenishmentItemName}} * {{item.replenishmentItemNum}}
+                {{ item.replenishmentItemName }} * {{ item.replenishmentItemNum }}
               </q-item-section>
               <q-item-section side>
-                {{item.replenishmentItemPrice}}
+                {{ item.replenishmentItemPrice }}
               </q-item-section>
             </q-item>
             <q-separator/>
@@ -69,7 +69,7 @@
                 合计：
               </q-item-section>
               <q-item-section side>
-                {{total}}
+                {{ total }}
               </q-item-section>
             </q-item>
           </q-list>
@@ -88,7 +88,7 @@
           <q-avatar class="text-center" @click="changeAccount()">
             <img :src="$store.state.user_info.headimgurl">
           </q-avatar>
-          <div style="margin-left: 20px" class="text-subtitle2">{{$store.state.user_info.nickname}}</div>
+          <div style="margin-left: 20px" class="text-subtitle2">{{ $store.state.user_info.nickname }}</div>
           <q-space/>
           <q-btn icon="close" flat round dense v-close-popup/>
         </q-card-section>
@@ -187,7 +187,7 @@
         </q-btn>
         <div class="row no-wrap items-center" @click="dialog.shop=true">
           <div class="col text-h6 ellipsis" style="margin-left: 4px">
-            零食盒子 {{$store.state.shop_address}}
+            零食盒子 {{ $store.state.shop_address }}
           </div>
 
         </div>
@@ -233,11 +233,11 @@
                         </q-avatar>
                       </q-item-section>
                       <q-item-section>
-                        <q-item-label>{{item.itemName}}</q-item-label>
-                        <q-item-label caption>余量：{{item.itemStockCurrent}}</q-item-label>
+                        <q-item-label>{{ item.itemName }}</q-item-label>
+                        <q-item-label caption>余量：{{ item.itemStockCurrent }}</q-item-label>
                       </q-item-section>
                       <q-item-section side>
-                        ￥{{item.itemPrice}}
+                        ￥{{ item.itemPrice }}
                       </q-item-section>
                     </q-item>
                   </q-card>
@@ -252,185 +252,190 @@
 </template>
 
 <script>
-  import axios from "axios";
-  import {wexinPay} from "../plugins/weixinPay"
-  import $ from 'jquery'
+import axios from 'axios';
+import { wexinPay } from '../plugins/weixinPay';
+import $ from 'jquery';
 
-  const qs = require('qs');
-  export default {
-    name: 'PageIndex',
-    beforeMount() {
-      this.items = this.$store.state.items;
-      this.tab = this.$store.state.items[0].sortName;
-    },
-    data() {
-      return {
-        dialog: {
-          replenishment: false,
-          shop: false,
-          user_info: false,
-          admin: false
-        },
-        replenishment_info: null,
-        total: null,
-        num: 0,
-        time0: '',
-        time4: '',
-        items: null,
-        stars: 3,
-        tab: null,
-        admin: {
-          id: '',
-          pwd: ''
-        },
-        active: true,
-        splitterModel: 20,
-      }
-    },
-    methods: {
-      ItemToCart(item) {
-        this.$emit('getItem', item);
+const qs = require('qs');
+export default {
+  name: 'PageIndex',
+  beforeMount() {
+    this.items = this.$store.state.items;
+    this.tab = this.$store.state.items[0].sortName;
+  },
+  data() {
+    return {
+      dialog: {
+        replenishment: false,
+        shop: false,
+        user_info: false,
+        admin: false
       },
-      goOrder() {
-        this.$router.push('/order');
+      replenishment_info: null,
+      total: null,
+      num: 0,
+      time0: '',
+      time4: '',
+      items: null,
+      stars: 3,
+      tab: null,
+      admin: {
+        id: '',
+        pwd: ''
       },
+      active: true,
+      splitterModel: 20,
+    };
+  },
+  methods: {
+    ItemToCart(item) {
+      this.$emit('getItem', item);
+    },
+    goOrder() {
+      this.$router.push('/order');
+    },
 
-      pay() {
-        // let that = this;
-        // axios.post(that.$store.state.url_paths.getWxConfig, qs.stringify({}))
-        //   .then(function (response) {
-        //       pay(response.data)
-        //   })
-        //   .catch(function (error) {
-        //     that.$q.dialog({
-        //       title: '网络错误',
-        //       message: '错误信息：' + error
-        //     })
-        //   });
-      },
-      Replenishment() {
-        let that = this;
-        axios.post(that.$store.state.url_paths.replenishment, qs.stringify({
-          access_token: that.$store.state.user_info.access_token,
-        }))
-          .then(function (response) {
-            if (response.data.code === 200) {
-              that.dialog.replenishment = true;
-              that.total = response.data.data.allPrice;
-              that.replenishment_info = response.data.data.info;
-            } else if (response.data.code !== 200) {
-              that.$q.dialog({
-                title: response.data.code + '错误！',
-                message: '错误信息：' + response.data.msg
-              })
-            }
-          })
-          .catch(function (error) {
+    pay() {
+      // let that = this;
+      // axios.post(that.$store.state.url_paths.getWxConfig, qs.stringify({}))
+      //   .then(function (response) {
+      //       pay(response.data)
+      //   })
+      //   .catch(function (error) {
+      //     that.$q.dialog({
+      //       title: '网络错误',
+      //       message: '错误信息：' + error
+      //     })
+      //   });
+    },
+    Replenishment() {
+      let that = this;
+      axios.post(that.$store.state.url_paths.replenishment, qs.stringify({
+        access_token: that.$store.state.user_info.access_token,
+      }))
+        .then(function (response) {
+          if (response.data.code === 200) {
+            that.dialog.replenishment = true;
+            that.total = response.data.data.allPrice;
+            that.replenishment_info = response.data.data.info;
+          } else if (response.data.code !== 200) {
             that.$q.dialog({
-              title: '网络错误',
-              message: '错误信息：' + error
-            })
-          });
-      },
-      AdminLogin() {
-        let that = this;
-        axios.post(that.$store.state.url_paths.bindPermission, qs.stringify({
-          access_token: that.$store.state.user_info.access_token,
-          userLogin: that.admin.id,
-          userPassword: that.admin.pwd
-        }))
-          .then(function (response) {
-            if (response.data.code === 200) {
-              that.$q.notify('登录成功');
-              that.dialog.admin = false;
-            } else if (response.data.code !== 200) {
-              that.$q.dialog({
-                title: response.data.code + '错误！',
-                message: '错误信息：' + response.data.msg
-              })
-            }
-          })
-          .catch(function (error) {
-            that.$q.dialog({
-              title: '网络错误',
-              message: '错误信息：' + error
-            })
-          });
-      },
-      changeAccount() {
-        this.num++;
-        if (this.num == 1) {
-          this.timer0 = new Date().getTime() / 1000
-        }
-        if (this.num == 4) {
-          this.timer4 = new Date().getTime() / 1000;
-          if (this.timer4 - this.timer0 <= 3) {
-            this.num = 0;
-            this.dialog.admin = true
-          } else {
-            this.num = 0
+              title: response.data.code + '错误！',
+              message: '错误信息：' + response.data.msg
+            });
           }
+        })
+        .catch(function (error) {
+          that.$q.dialog({
+            title: '网络错误',
+            message: '错误信息：' + error
+          });
+        });
+    },
+    AdminLogin() {
+      let that = this;
+      axios.post(that.$store.state.url_paths.bindPermission, qs.stringify({
+        access_token: that.$store.state.user_info.access_token,
+        userLogin: that.admin.id,
+        userPassword: that.admin.pwd
+      }))
+        .then(function (response) {
+          if (response.data.code === 200) {
+            that.$q.notify('登录成功');
+            that.dialog.admin = false;
+          } else if (response.data.code !== 200) {
+            that.$q.dialog({
+              title: response.data.code + '错误！',
+              message: '错误信息：' + response.data.msg
+            });
+          }
+        })
+        .catch(function (error) {
+          that.$q.dialog({
+            title: '网络错误',
+            message: '错误信息：' + error
+          });
+        });
+    },
+    changeAccount() {
+      this.num++;
+      if (this.num == 1) {
+        this.timer0 = new Date().getTime() / 1000;
+      }
+      if (this.num == 4) {
+        this.timer4 = new Date().getTime() / 1000;
+        if (this.timer4 - this.timer0 <= 3) {
+          this.num = 0;
+          this.dialog.admin = true;
+        } else {
+          this.num = 0;
         }
       }
     }
   }
-  var appId, timeStamp, nonceStr, package_, signType, paySign;
+};
+var appId,
+  timeStamp,
+  nonceStr,
+  package_,
+  signType,
+  paySign;
 
-  function pay() {
-    var url = "http://lsp.chinaqwe.top:10001/pay/orders";
-    $.get(url, function (result) {
-      appId = result.appId;
-      timeStamp = result.timeStamp;
-      nonceStr = result.nonceStr;
-      package_ = result.package;
-      signType = result.signType;
-      paySign = result.paySign;
+function pay() {
+  var url = 'http://lsp.chinaqwe.top:10001/pay/orders';
+  $.get(url, function (result) {
+    appId = result.appId;
+    timeStamp = result.timeStamp;
+    nonceStr = result.nonceStr;
+    package_ = result.package;
+    signType = result.signType;
+    paySign = result.paySign;
 
-      if (typeof WeixinJSBridge == "undefined") {
-        if (document.addEventListener) {
-          document.addEventListener('WeixinJSBridgeReady',
-            onBridgeReady, false);
-        } else if (document.attachEvent) {
-          document.attachEvent('WeixinJSBridgeReady',
-            onBridgeReady);
-          document.attachEvent('onWeixinJSBridgeReady',
-            onBridgeReady);
-        }
-        alert("请在微信上进行支付操作！");
-        onBridgeReady();
-      } else {
-        onBridgeReady();
+    if (typeof WeixinJSBridge == 'undefined') {
+      if (document.addEventListener) {
+        document.addEventListener('WeixinJSBridgeReady',
+          onBridgeReady, false);
+      } else if (document.attachEvent) {
+        document.attachEvent('WeixinJSBridgeReady',
+          onBridgeReady);
+        document.attachEvent('onWeixinJSBridgeReady',
+          onBridgeReady);
       }
+      alert('请在微信上进行支付操作！');
+      onBridgeReady();
+    } else {
+      onBridgeReady();
+    }
+  });
+}
+
+//去微信那边发起支付请求
+function onBridgeReady() {
+
+  alert('appId:' + appId + ' ' + 'timeStamp:' + timeStamp + ' ' + 'nonceStr:' + nonceStr + ' ' + 'package:' + package_ + ' ' + 'signType:' + signType + ' ' + 'paySign:' + paySign + ' ');
+
+  WeixinJSBridge.invoke('getBrandWCPayRequest', {
+      'appId': appId,     //公众号名称,由商户传入
+      'timeStamp': timeStamp,         //时间戳,自1970年以来的秒数
+      'nonceStr': nonceStr, //随机串
+      'package': package_,
+      'signType': signType,         //微信签名方式：
+      'paySign': paySign //微信签名
+    },
+    function (res) {
+      if (res.err_msg == 'get_brand_wcpay_request:ok') {
+        //alert('支付成功');
+        console.log('支付成功');
+        //支付成功后跳转的页面
+      } else if (res.err_msg == 'get_brand_wcpay_request:cancel') {
+        alert('支付取消');
+      } else if (res.err_msg == 'get_brand_wcpay_request:fail') {
+        alert('支付失败');
+
+        alert(JSON.stringify(res));
+
+        WeixinJSBridge.call('closeWindow');
+      } //使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok,但并不保证它绝对可靠。
     });
-  }
-
-  //去微信那边发起支付请求
-  function onBridgeReady() {
-
-    alert("appId:" + appId + " " + "timeStamp:" + timeStamp + " " + "nonceStr:" + nonceStr + " " + "package:" + package_ + " " + "signType:" + signType + " " + "paySign:" + paySign + " ");
-
-    WeixinJSBridge.invoke('getBrandWCPayRequest', {
-        "appId": appId,     //公众号名称,由商户传入
-        "timeStamp": timeStamp,         //时间戳,自1970年以来的秒数
-        "nonceStr": nonceStr, //随机串
-        "package": package_,
-        "signType": signType,         //微信签名方式：
-        "paySign": paySign //微信签名
-      },
-      function (res) {
-        if (res.err_msg == "get_brand_wcpay_request:ok") {
-          //alert('支付成功');
-          console.log("支付成功");
-          //支付成功后跳转的页面
-        } else if (res.err_msg == "get_brand_wcpay_request:cancel") {
-          alert('支付取消');
-        } else if (res.err_msg == "get_brand_wcpay_request:fail") {
-          alert('支付失败');
-
-          alert(JSON.stringify(res));
-
-          WeixinJSBridge.call('closeWindow');
-        } //使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok,但并不保证它绝对可靠。
-      });
-  }
+}
 </script>
