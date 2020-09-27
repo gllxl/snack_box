@@ -10,7 +10,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 if (process.env.DEV) {
   axios.defaults.baseURL = 'http://lsp.chinaqwe.top:10001/';
 } else if (process.env.PROD) {
-  axios.defaults.baseURL = 'http://127.0.0.1:10001';
+  axios.defaults.baseURL = 'http://lsp.chinaqwe.top:10001/';
 }
 
 const toLogin = () => {

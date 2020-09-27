@@ -253,10 +253,11 @@
 
 <script>
 import axios from 'axios';
-import { wexinPay } from '../plugins/weixinPay';
 import $ from 'jquery';
+import { wexinPay } from '../plugins/weixinPay';
 
 const qs = require('qs');
+
 export default {
   name: 'PageIndex',
   beforeMount() {
@@ -269,7 +270,7 @@ export default {
         replenishment: false,
         shop: false,
         user_info: false,
-        admin: false
+        admin: false,
       },
       replenishment_info: null,
       total: null,
@@ -281,7 +282,7 @@ export default {
       tab: null,
       admin: {
         id: '',
-        pwd: ''
+        pwd: '',
       },
       active: true,
       splitterModel: 20,
@@ -309,51 +310,51 @@ export default {
       //   });
     },
     Replenishment() {
-      let that = this;
+      const that = this;
       axios.post(that.$store.state.url_paths.replenishment, qs.stringify({
         access_token: that.$store.state.user_info.access_token,
       }))
-        .then(function (response) {
+        .then((response) => {
           if (response.data.code === 200) {
             that.dialog.replenishment = true;
             that.total = response.data.data.allPrice;
             that.replenishment_info = response.data.data.info;
           } else if (response.data.code !== 200) {
             that.$q.dialog({
-              title: response.data.code + '错误！',
-              message: '错误信息：' + response.data.msg
+              title: `${response.data.code}错误！`,
+              message: `错误信息：${response.data.msg}`,
             });
           }
         })
-        .catch(function (error) {
+        .catch((error) => {
           that.$q.dialog({
             title: '网络错误',
-            message: '错误信息：' + error
+            message: `错误信息：${error}`,
           });
         });
     },
     AdminLogin() {
-      let that = this;
+      const that = this;
       axios.post(that.$store.state.url_paths.bindPermission, qs.stringify({
         access_token: that.$store.state.user_info.access_token,
         userLogin: that.admin.id,
-        userPassword: that.admin.pwd
+        userPassword: that.admin.pwd,
       }))
-        .then(function (response) {
+        .then((response) => {
           if (response.data.code === 200) {
             that.$q.notify('登录成功');
             that.dialog.admin = false;
           } else if (response.data.code !== 200) {
             that.$q.dialog({
-              title: response.data.code + '错误！',
-              message: '错误信息：' + response.data.msg
+              title: `${response.data.code}错误！`,
+              message: `错误信息：${response.data.msg}`,
             });
           }
         })
-        .catch(function (error) {
+        .catch((error) => {
           that.$q.dialog({
             title: '网络错误',
-            message: '错误信息：' + error
+            message: `错误信息：${error}`,
           });
         });
     },
@@ -371,19 +372,19 @@ export default {
           this.num = 0;
         }
       }
-    }
-  }
+    },
+  },
 };
-var appId,
-  timeStamp,
-  nonceStr,
-  package_,
-  signType,
-  paySign;
+let appId;
+let timeStamp;
+let nonceStr;
+let package_;
+let signType;
+let paySign;
 
 function pay() {
-  var url = 'http://lsp.chinaqwe.top:10001/pay/orders';
-  $.get(url, function (result) {
+  const url = 'http://lsp.chinaqwe.top:10001/pay/orders';
+  $.get(url, (result) => {
     appId = result.appId;
     timeStamp = result.timeStamp;
     nonceStr = result.nonceStr;
@@ -391,7 +392,7 @@ function pay() {
     signType = result.signType;
     paySign = result.paySign;
 
-    if (typeof WeixinJSBridge == 'undefined') {
+    if (typeof WeixinJSBridge === 'undefined') {
       if (document.addEventListener) {
         document.addEventListener('WeixinJSBridgeReady',
           onBridgeReady, false);
@@ -409,33 +410,32 @@ function pay() {
   });
 }
 
-//去微信那边发起支付请求
+// 去微信那边发起支付请求
 function onBridgeReady() {
-
-  alert('appId:' + appId + ' ' + 'timeStamp:' + timeStamp + ' ' + 'nonceStr:' + nonceStr + ' ' + 'package:' + package_ + ' ' + 'signType:' + signType + ' ' + 'paySign:' + paySign + ' ');
+  alert(`appId:${appId} ` + `timeStamp:${timeStamp} ` + `nonceStr:${nonceStr} ` + `package:${package_} ` + `signType:${signType} ` + `paySign:${paySign} `);
 
   WeixinJSBridge.invoke('getBrandWCPayRequest', {
-      'appId': appId,     //公众号名称,由商户传入
-      'timeStamp': timeStamp,         //时间戳,自1970年以来的秒数
-      'nonceStr': nonceStr, //随机串
-      'package': package_,
-      'signType': signType,         //微信签名方式：
-      'paySign': paySign //微信签名
-    },
-    function (res) {
-      if (res.err_msg == 'get_brand_wcpay_request:ok') {
-        //alert('支付成功');
-        console.log('支付成功');
-        //支付成功后跳转的页面
-      } else if (res.err_msg == 'get_brand_wcpay_request:cancel') {
-        alert('支付取消');
-      } else if (res.err_msg == 'get_brand_wcpay_request:fail') {
-        alert('支付失败');
+    appId, // 公众号名称,由商户传入
+    timeStamp, // 时间戳,自1970年以来的秒数
+    nonceStr, // 随机串
+    package: package_,
+    signType, // 微信签名方式：
+    paySign, // 微信签名
+  },
+  (res) => {
+    if (res.err_msg == 'get_brand_wcpay_request:ok') {
+      // alert('支付成功');
+      console.log('支付成功');
+      // 支付成功后跳转的页面
+    } else if (res.err_msg == 'get_brand_wcpay_request:cancel') {
+      alert('支付取消');
+    } else if (res.err_msg == 'get_brand_wcpay_request:fail') {
+      alert('支付失败');
 
-        alert(JSON.stringify(res));
+      alert(JSON.stringify(res));
 
-        WeixinJSBridge.call('closeWindow');
-      } //使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok,但并不保证它绝对可靠。
-    });
+      WeixinJSBridge.call('closeWindow');
+    } // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok,但并不保证它绝对可靠。
+  });
 }
 </script>

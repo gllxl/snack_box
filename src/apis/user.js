@@ -11,7 +11,7 @@ const user = {
    */
 
   getCode(code, shop_id) {
-    return axios.post('/getCode', qs.stringify({
+    return axios.post('/user/getCode', qs.stringify({
       code,
       shop_id,
     }));

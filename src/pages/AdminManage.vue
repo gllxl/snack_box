@@ -68,7 +68,7 @@
             <div v-for="(shop,i) in shop_info"
                  :key="shop.shopId" class="col-6 q-pa-sm">
               <q-card flat bordered @click="goShopDetail(shop)">
-                <q-linear-progress size="2px" :value="1" color="teal"/>
+                <q-linear-progress size="2px" :value="1" :color="shop.shopState ? 'teal' : 'red'"/>
                 <q-card-section>
 
                   <q-list v-ripple="false" padding class="rounded-borders">
@@ -109,7 +109,7 @@
             <div v-for="(shop,i) in replenishment_info"
                  :key="shop.replenishmentItemId" class="col-6 q-pa-sm">
               <q-card flat bordered @click="getReplenishmentDetailInfo(shop)">
-                <q-linear-progress size="2px" :value="1" color="teal"/>
+                <q-linear-progress size="2px" :value="1" :color="shop.shopState ? 'teal' : 'red'"/>
                 <q-card-section>
 
                   <q-list v-ripple="false" padding class="rounded-borders">

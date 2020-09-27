@@ -73,7 +73,9 @@ export default {
           this.$store.commit('getUserPermission', res.data.data.permission);
           this.$api.shop.getBoxItems(this.$store.state.user_info.access_token)
             .then((res) => {
-              this.$store.commit('getBoxItems', res.data.data.Info);
+              this.$store.commit('getBoxItems', res.data.data.Info.filter(item => {
+                return item?.sortPageItem.length > 0
+              }));
               this.$router.push('/');
             });
         })

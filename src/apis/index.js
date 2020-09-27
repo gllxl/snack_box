@@ -1,6 +1,6 @@
 import user from './user';
-import shop from './shop'
+import shop from './shop';
 
 export default {
-  user, device: shop,
+  user, shop,
 };

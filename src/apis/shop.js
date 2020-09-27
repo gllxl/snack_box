@@ -8,7 +8,7 @@ const shop = {
    * @param access_token
    */
   getBoxItems(access_token) {
-    return axios.post('/getBoxItems', qs.stringify({
+    return axios.post('/user/getItem', qs.stringify({
       access_token,
     }));
   },
