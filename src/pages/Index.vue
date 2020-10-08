@@ -30,8 +30,8 @@
               零食盒子 {{ $store.state.shop_address }}
             </div>
             <div>
-              信用评级
-              <q-rating v-model="stars" :max="5" size="18px"/>
+              信用分:
+              <q-badge :color="$store.state.credit_score > 79 ? 'green' : 'red'" text-color="white" :label="$store.state.credit_score" />
             </div>
 
           </div>

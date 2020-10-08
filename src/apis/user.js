@@ -5,7 +5,7 @@ const user = {
 
   /**
    * 获取用户信息
-   * @return 1
+   * @return user_info
    * @param code
    * @param shop_id
    */
@@ -18,16 +18,17 @@ const user = {
   },
 
   /**
-   * 获取订单信息
+   * 确认补货
+   * @param access_token token
+   * @param replenishment_id 补货id
    * @return 1
-   * @param access_token
    */
-
-  // findOrderByToken(access_token) {
-  //   return axios.post('/findOrderByToken', qs.stringify({
-  //     access_token,
-  //   }));
-  // },
+  updateReplenishment(access_token, replenishment_id) {
+    return axios.post('/user/updateReplenishment', qs.stringify({
+      access_token,
+      replenishment_id,
+    }));
+  },
 };
 
 export default user;

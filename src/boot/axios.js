@@ -7,11 +7,12 @@ import api from '../apis'; // 导入api接口
 axios.defaults.withCredentials = true;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 
-if (process.env.DEV) {
-  axios.defaults.baseURL = 'http://lsp.chinaqwe.top:10001/';
-} else if (process.env.PROD) {
-  axios.defaults.baseURL = 'http://lsp.chinaqwe.top:10001/';
-}
+// if (process.env.DEV) {
+//   axios.defaults.baseURL = 'http://lsp.chinaqwe.top:10001/';
+// } else if (process.env.PROD) {
+//   axios.defaults.baseURL = 'http://lsp.chinaqwe.top:10001/';
+// }
+axios.defaults.baseURL = 'http://lsp.chinaqwe.top:10001/';
 
 const toLogin = () => {
   router.replace({

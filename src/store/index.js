@@ -30,6 +30,7 @@ export default function (/* { ssrContext } */) {
       shop_id: null,
       shop_address: '',
       permission: '0',
+      credit_score: '80',
       location: {
         id: '',
       },
@@ -98,6 +99,9 @@ export default function (/* { ssrContext } */) {
       },
       getShopAddress(state, shop_address) {
         state.shop_address = shop_address;
+      },
+      getCreditScore(state, credit_score) {
+        state.credit_score = credit_score;
       },
       getUserInfo(state, user_info) {
         state.user_info = user_info;

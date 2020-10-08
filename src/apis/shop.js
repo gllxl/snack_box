@@ -12,5 +12,11 @@ const shop = {
       access_token,
     }));
   },
+  findItemInfoByShopId(access_token, shop_id) {
+    return axios.post('/admin/findItemInfoByShopId', qs.stringify({
+      access_token,
+      shop_id,
+    }));
+  },
 };
 export default shop;
