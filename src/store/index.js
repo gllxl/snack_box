@@ -23,7 +23,7 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state: {
       user_info: {
-        access_token: null,
+        access_token: '42_iTIhbF1N5Oq87hq-gdm0KQHc1w69X8HnriRYnnsCFsVJ5istNBIl6ih5OtxjCmv43-zV9wC5j9qAsKUn3Vnv_A',
       },
       items: null,
       code: '',
