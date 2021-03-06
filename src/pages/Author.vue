@@ -66,27 +66,28 @@ export default {
     //     });
     // },
     login() {
-      // this.$api.user.getCode(this.$store.state.code, this.$store.state.shop_id)
-      //   .then((res) => {
-      //     console.log(res);
-      //     this.$store.commit('getShopAddress', res.data.data.shopAddress);
-      //     this.$store.commit('getCreditScore', res.data.data.creditScore);
-      //     this.$store.commit('getUserInfo', res.data.data.userInfo);
-      //     this.$store.commit('getUserPermission', res.data.data.permission);
-      //     this.$api.shop.getBoxItems(this.$store.state.user_info.access_token)
-      //       .then((res) => {
-      //         this.$store.commit('getBoxItems', res.data.data.Info.filter(item => item?.sortPageItem.length > 0));
-      //         this.$router.push('/');
-      //       });
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
-      this.$api.shop.getBoxItems(this.$store.state.user_info.access_token)
+      this.$api.user.getCode(this.$store.state.code, this.$store.state.shop_id)
         .then((res) => {
-          this.$store.commit('getBoxItems', res.data.data.Info.filter(item => item?.sortPageItem.length > 0));
-          this.$router.push('/');
+          console.log(res);
+          this.$store.commit('getShopAddress', res.data.data.shopAddress);
+          this.$store.commit('getCreditScore', res.data.data.creditScore);
+          this.$store.commit('getUserInfo', res.data.data.userInfo);
+          this.$store.commit('getUserPermission', res.data.data.permission);
+          this.$api.shop.getBoxItems(this.$store.state.user_info.access_token)
+            .then((res) => {
+              this.$store.commit('getBoxItems', res.data.data.Info.filter(item => item?.sortPageItem.length > 0));
+              this.$router.push('/');
+            });
+        })
+        .catch((error) => {
+          console.log(error);
         });
+
+      // this.$api.shop.getBoxItems(this.$store.state.user_info.access_token)
+      //   .then((res) => {
+      //     this.$store.commit('getBoxItems', res.data.data.Info.filter(item => item?.sortPageItem.length > 0));
+      //     this.$router.push('/');
+      //   });
     },
   },
 };
