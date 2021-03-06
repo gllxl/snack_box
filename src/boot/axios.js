@@ -23,7 +23,7 @@ const toLogin = () => {
   });
 };
 
-const tip = msg => {
+const tip = (msg) => {
   Notify.create({
     message: msg,
     timeout: 1000,
@@ -68,9 +68,9 @@ instance.interceptors.response.use(
     if (response) {
       errorHandle(response.status, response.data.message);
       return Promise.reject(response);
-    } else {
     }
-  });
+  },
+);
 export default instance;
 
 Vue.prototype.$axios = axios;

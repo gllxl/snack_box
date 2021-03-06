@@ -27,6 +27,7 @@
 import axios from 'axios';
 
 const qs = require('qs');
+
 export default {
   name: 'AdminManageDetail',
   created() {
@@ -34,27 +35,27 @@ export default {
   },
   data() {
     return {
-      item_list: ''
+      item_list: '',
     };
   },
   methods: {
     getItemInfo() {
-      let that = this;
+      const that = this;
       axios.post(that.$store.state.url_paths.findItemInfoByShopId, qs.stringify({
         access_token: that.$store.state.user_info.access_token,
-        shop_id: that.$store.state.location.id
+        shop_id: that.$store.state.location.id,
       }))
-        .then(function (response) {
+        .then((response) => {
           that.item_list = response.data.itemInfo;
         })
-        .catch(function (error) {
+        .catch((error) => {
           that.$q.dialog({
             title: '网络错误',
-            message: '错误信息：' + error
+            message: `错误信息：${error}`,
           });
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

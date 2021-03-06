@@ -116,12 +116,12 @@ export default {
       }))
         .then((response) => {
           console.log(response);
-          let appId = response.data.appId;
-          let timeStamp = response.data.timeStamp;
-          let nonceStr = response.data.nonceStr;
-          let package_ = response.data.package;
-          let signType = response.data.signType;
-          let paySign = response.data.paySign;
+          const { appId } = response.data;
+          const { timeStamp } = response.data;
+          const { nonceStr } = response.data;
+          const package_ = response.data.package;
+          const { signType } = response.data;
+          const { paySign } = response.data;
 
           alert(`appId:${appId} ` + `timeStamp:${timeStamp} ` + `nonceStr:${nonceStr} ` + `package:${package_} ` + `signType:${signType} ` + `paySign:${paySign} `);
 

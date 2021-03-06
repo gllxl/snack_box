@@ -34,10 +34,10 @@
 export default {
   // name: 'LayoutName',
 
-  data () {
+  data() {
     return {
-      leftDrawer: true
-    }
-  }
-}
+      leftDrawer: true,
+    };
+  },
+};
 </script>

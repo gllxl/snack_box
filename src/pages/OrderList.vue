@@ -52,40 +52,41 @@
 
 
 <script>
-  import axios from "axios";
+import axios from 'axios';
 
-  const Qs = require('qs');
-  export default {
-    data() {
-      return {
-        expanded: false,
-        order_list: [
-          {
-            orderItemJson :{}
-          }
-        ]
-      }
-    },
-    beforeMount() {
-      this.getOrder()
-    },
-    methods: {
-      getOrder() {
-        let that = this;
-        axios.post(that.$store.state.url_paths.getOrder, Qs.stringify({
-          access_token: that.$store.state.user_info.access_token
-        }))
-          .then(function (response) {
-            if (response.data.code === 200) {
-              that.order_list = response.data.data.OrderInfo;
-              for (let i = 0; i < response.data.data.OrderInfo.length; i++) {
-                console.log(that.order_list[i].orderItemJson);
-                that.order_list[i].orderItemJson = JSON.parse(response.data.data.OrderInfo[i].orderItemJson);
-              }
-              console.log(that.order_list)
+const Qs = require('qs');
+
+export default {
+  data() {
+    return {
+      expanded: false,
+      order_list: [
+        {
+          orderItemJson: {},
+        },
+      ],
+    };
+  },
+  beforeMount() {
+    this.getOrder();
+  },
+  methods: {
+    getOrder() {
+      const that = this;
+      axios.post(that.$store.state.url_paths.getOrder, Qs.stringify({
+        access_token: that.$store.state.user_info.access_token,
+      }))
+        .then((response) => {
+          if (response.data.code === 200) {
+            that.order_list = response.data.data.OrderInfo;
+            for (let i = 0; i < response.data.data.OrderInfo.length; i++) {
+              console.log(that.order_list[i].orderItemJson);
+              that.order_list[i].orderItemJson = JSON.parse(response.data.data.OrderInfo[i].orderItemJson);
             }
-          })
-      }
+            console.log(that.order_list);
+          }
+        });
     },
-  }
+  },
+};
 </script>
