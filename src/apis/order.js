@@ -13,6 +13,12 @@ const order = {
       access_token,
     }));
   },
+
+  getMyOrder(access_token) {
+    return axios.post('/user/getOrder', qs.stringify({
+      access_token,
+    }))
+  }
 };
 
 export default order
