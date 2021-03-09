@@ -143,19 +143,19 @@ export default {
   },
   methods: {
     getOrder() {
-      const that = this;
-      axios.post(that.$store.state.url_paths.getOrder, Qs.stringify({
-        access_token: that.$store.state.user_info.access_token,
-      }))
-        .then((response) => {
-          if (response.data.code === 200) {
-            that.order_list = response.data.data.OrderInfo;
-            for (let i = 0; i < response.data.data.OrderInfo.length; i++) {
-              console.log(that.order_list[i].orderItemJson);
-              that.order_list[i].orderItemJson = JSON.parse(response.data.data.OrderInfo[i].orderItemJson);
+      this.$api.order.getMyOrder(this.$store.state.user_info.access_token)
+        .then((res) => {
+          if (res.data.code === 200) {
+            this.order_list = res.data.data.OrderInfo;
+            for (let i = 0; i < res.data.data.OrderInfo.length; i++) {
+              console.log(this.order_list[i].orderItemJson);
+              this.order_list[i].orderItemJson = JSON.parse(response.data.data.OrderInfo[i].orderItemJson);
             }
-            console.log(that.order_list);
+            console.log(this.order_list);
           }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     getBoxOrder() {
